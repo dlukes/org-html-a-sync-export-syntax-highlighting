@@ -1,0 +1,45 @@
+* Summary
+This repository contains a minimal working example that demonstrates differences in syntax highlighting between sync and async Org Mode HTML export.
+
+* Instructions
+In a terminal, run:
+
+#+begin_src sh
+git clone git@github.com:dlukes/org-html-a-sync-export-syntax-highlighting.git
+cd org-html-a-sync-export-syntax-highlighting
+emacs -Q -l init.el test.org
+#+end_src
+
+Generate a sync HTML export and take a look at it (=C-c C-e h o=). Then, run an async export (=C-c C-e C-a h h=) and refresh the browser page. The syntax highlighting of the src block should differ:
+
+- sync export :: colors are used in the syntax highlighting of the src block
+- async export :: no colors, just bold / italics / possibly underline (not in the default theme, but I've seen it with other ones)
+
+* tl;dr (Too long; didn't run)
+For reference, exports as generated on my machine (Fedora 36) are provided in =./test-sync-ref.html= and =./test-async-ref.html=. Here's the diff:
+
+#+begin_src diff
+200,203c200,203
+< <pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">foo</span>():
+<     <span style="color: #8b2252;">"""Docstring"""</span>
+<     <span style="color: #b22222;"># </span><span style="color: #b22222;">comment</span>
+<     <span style="color: #a020f0;">pass</span>
+---
+> <pre class="src src-python"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">foo</span>():
+>     <span style="font-style: italic;">"""Docstring"""</span>
+>     <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">comment</span>
+>     <span style="font-weight: bold;">pass</span>
+#+end_src
+
+I have seen the same results on macOS.
+
+* Additional information
+I tried generating the exports directly as part of =init.el= using the following code at the end of the file:
+
+#+begin_src elisp
+(find-file (expand-file-name "test.org" straight-base-dir))
+(org-html-export-to-html nil nil nil nil '(:html-extension "sync.html"))
+(org-html-export-to-html t nil nil nil '(:html-extension "async.html"))
+#+end_src
+
+However, this generated identical exports, without colors in both cases.

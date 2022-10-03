@@ -1,0 +1,6 @@
+#+begin_src python
+def foo():
+    """Docstring"""
+    # comment
+    pass
+#+end_src
